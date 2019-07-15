@@ -53,6 +53,7 @@ int FalconRosDriver::initFalcon() {
     // retrieve information about the current haptic device
     chai3d::cHapticDeviceInfo info = hapticDevice->getSpecifications();
     std::cout << "Connected to: " << info.m_manufacturerName << " " << info.m_modelName << std::endl;
+    return 1;
 }
 
 void FalconRosDriver::saturatAndSetForces(double x, double y, double z) {
