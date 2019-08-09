@@ -8,6 +8,7 @@
 #include <geometry_msgs/Vector3Stamped.h>
 #include <geometry_msgs/Vector3.h>
 #include <std_msgs/Int8MultiArray.h>
+#include <std_msgs/Float32.h>
 
 /* Chai3d library */
 #include <chai3d.h>
@@ -21,7 +22,7 @@
 
 class Chai3dRosDriver {
 public:
-    Chai3dRosDriver(ros::NodeHandle node, float loopRate, std::string positionTopic, std::string velocityTopic, std::string buttonsTopic, std::string forceSubTopic, bool forceOutput = false);
+    Chai3dRosDriver(ros::NodeHandle node, float loopRate, std::string positionTopic, std::string velocityTopic, std::string buttonsTopic, std::string forceSubTopic, std::string rateTopic, bool forceOutput = false);
     ~Chai3dRosDriver();
 
     /**
@@ -42,6 +43,7 @@ private:
     ros::Publisher position_pub;
     ros::Publisher velocity_pub;
     ros::Publisher buttons_pub;
+    ros::Publisher rate_pub;
     ros::Subscriber force_sub;
     ros::Rate loopRate;
 
@@ -49,6 +51,7 @@ private:
     std::string velocityTopic;
     std::string buttonsTopic;
     std::string forceSubTopic;
+    std::string rateTopic;
 
     // a haptic device handler
 	chai3d::cHapticDeviceHandler* handler;
@@ -62,6 +65,9 @@ private:
     chai3d::cVector3d velocity;
     /* End-effector buttons pressed */
     std::vector<int> buttons;
+    float rate;
+    // a frequency counter to measure the simulation haptic rate
+    chai3d::cFrequencyCounter freqCounterHaptics;
 
     /*  Rendering force   */
     chai3d::cVector3d force;

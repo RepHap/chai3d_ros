@@ -7,9 +7,9 @@
 
 Chai3dRosDriver::Chai3dRosDriver(ros::NodeHandle node, float loopRate, std::string positionTopic,
                                  std::string velocityTopic, std::string buttonsTopic, std::string forceSubTopic,
-                                 bool forceOutput) :
+                                 std::string rateTopic, bool forceOutput) :
         node(node), loopRate(loopRate), positionTopic(positionTopic), velocityTopic(velocityTopic),
-        buttonsTopic(buttonsTopic), forceSubTopic(forceSubTopic), forceOutput(forceOutput),
+        buttonsTopic(buttonsTopic), forceSubTopic(forceSubTopic), forceOutput(forceOutput), rateTopic(rateTopic),
         position(0.0f, 0.0f, 0.0f), velocity(0.0f, 0.0f, 0.0f), force(0.0f, 0.0f, 0.0f), buttons(4, 0),
         hapticLoop(true), forceConsumed(true) {
     int initState = this->initFalcon();
@@ -27,6 +27,7 @@ Chai3dRosDriver::Chai3dRosDriver(ros::NodeHandle node, float loopRate, std::stri
 
     this->force_sub = this->node.subscribe<geometry_msgs::Vector3>(this->forceSubTopic, 1,
                                                                    &Chai3dRosDriver::forceCallback, this);
+    this->rate_pub = this->node.advertise<std_msgs::Float32>(this->rateTopic.c_str(),1);
 }
 
 Chai3dRosDriver::~Chai3dRosDriver() {
@@ -80,6 +81,7 @@ void Chai3dRosDriver::publishFalconData() {
         geometry_msgs::Vector3Stamped pos;
         geometry_msgs::Vector3Stamped velocity;
         std_msgs::Int8MultiArray but;
+        std_msgs::Float32 r;
         geometry_msgs::Vector3Stamped angles;
 
         pos.header.frame_id = velocity.header.frame_id = angles.header.frame_id = ros::this_node::getName();
@@ -95,10 +97,13 @@ void Chai3dRosDriver::publishFalconData() {
         but.data.push_back(buttons[1]);
         but.data.push_back(buttons[2]);
         but.data.push_back(buttons[3]);
+        
+        r.data = freqCounterHaptics.getFrequency();
 
         this->position_pub.publish(pos);
         this->velocity_pub.publish(velocity);
         this->buttons_pub.publish(but);
+        this->rate_pub.publish(r);
 
         if(forceConsumed) {
             force.set(0.0f, 0.0f, 0.0f);
@@ -158,6 +163,9 @@ void Chai3dRosDriver::falconCallback() {
         this->buttons[1] = button1;
         this->buttons[2] = button2;
         this->buttons[3] = button3;
+
+        // signal frequency counter
+        freqCounterHaptics.signal(1);
 
         /**
          * Apply forces
