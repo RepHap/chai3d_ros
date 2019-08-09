@@ -19,10 +19,10 @@
 /* Maximum rendering force*/
 #define MAX_FORCE 10.0f
 
-class FalconRosDriver {
+class Chai3dRosDriver {
 public:
-    FalconRosDriver(ros::NodeHandle node, float loopRate, std::string positionTopic, std::string velocityTopic, std::string buttonsTopic, std::string forceSubTopic, bool forceOutput = false);
-    ~FalconRosDriver();
+    Chai3dRosDriver(ros::NodeHandle node, float loopRate, std::string positionTopic, std::string velocityTopic, std::string buttonsTopic, std::string forceSubTopic, bool forceOutput = false);
+    ~Chai3dRosDriver();
 
     /**
      * Saturation
@@ -33,7 +33,7 @@ public:
 
     void publishFalconData();
 
-    void startFalconRosNode();
+    void startChai3dRosNode();
 
     void cleanUpFalcon();
 

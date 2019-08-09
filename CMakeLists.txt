@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(falcon_ros)
+project(chai3d_ros)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 #set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/external/chai3d-3.2.0/build")
@@ -13,6 +13,9 @@ find_package(catkin REQUIRED COMPONENTS
         rospy
         std_msgs
         )
+        
+set(BUILD_EXAMPLES OFF CACHE STRING "" FORCE)
+set(BUILD_UTILS OFF CACHE STRING "" FORCE)
 
 add_subdirectory (${PROJECT_SOURCE_DIR}/external/chai3d-3.2.0)
 
@@ -47,7 +50,7 @@ link_directories (${DHD_LIBRARY_DIRS})
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
         INCLUDE_DIRS include
-        #  LIBRARIES falcon_ros
+        #  LIBRARIES chai3d_ros
         CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs
         #  DEPENDS system_lib
 )
@@ -67,28 +70,28 @@ include_directories(
 )
 
 set(SOURCES
-        src/falcon_ros_node.cpp
-        src/FalconRosDriver.cpp
-        include/falcon_ros/FalconRosDriver.h
+        src/chai3d_ros_node.cpp
+        src/Chai3dRosDriver.cpp
+        include/chai3d_ros/Chai3dRosDriver.h
         )
 
 ## Declare a C++ executable
-add_executable(falcon_ros_node ${SOURCES})
+add_executable(chai3d_ros_node ${SOURCES})
 
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(falcon_ros_node
+target_link_libraries(chai3d_ros_node
         ${catkin_LIBRARIES}
         )
 
-target_link_libraries(falcon_ros_node ${CHAI3D_LIBRARIES})
+target_link_libraries(chai3d_ros_node ${CHAI3D_LIBRARIES})
 
 #############
 ## Install ##
 #############
 
 # Mark executables and/or libraries for installation
-install(TARGETS falcon_ros_node
+install(TARGETS chai3d_ros_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

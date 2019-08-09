@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>falcon_ros</name>
+  <name>chai3d_ros</name>
   <version>0.0.0</version>
-  <description>ROS Indigo driver node for the Novint Falcon haptic device implemented using the CHAI3D haptics sdk.</description>
+  <description>ROS Melodic driver node for haptic devices supported by the CHAI3D haptics SDK.</description>
 
   <maintainer email="stefan.spiss@student.uibk.ac.at">Stefan Spiss</maintainer>
 

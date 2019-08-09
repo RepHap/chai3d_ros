@@ -2,10 +2,10 @@
 // Created by stefan spiss on 06.07.17.
 //
 
-#include <falcon_ros/FalconRosDriver.h>
+#include <chai3d_ros/Chai3dRosDriver.h>
 
 
-FalconRosDriver::FalconRosDriver(ros::NodeHandle node, float loopRate, std::string positionTopic,
+Chai3dRosDriver::Chai3dRosDriver(ros::NodeHandle node, float loopRate, std::string positionTopic,
                                  std::string velocityTopic, std::string buttonsTopic, std::string forceSubTopic,
                                  bool forceOutput) :
         node(node), loopRate(loopRate), positionTopic(positionTopic), velocityTopic(velocityTopic),
@@ -26,14 +26,14 @@ FalconRosDriver::FalconRosDriver(ros::NodeHandle node, float loopRate, std::stri
     this->buttons_pub = this->node.advertise<std_msgs::Int8MultiArray>(this->buttonsTopic.c_str(), 1);
 
     this->force_sub = this->node.subscribe<geometry_msgs::Vector3>(this->forceSubTopic, 1,
-                                                                   &FalconRosDriver::forceCallback, this);
+                                                                   &Chai3dRosDriver::forceCallback, this);
 }
 
-FalconRosDriver::~FalconRosDriver() {
+Chai3dRosDriver::~Chai3dRosDriver() {
     //cleanUpFalcon();
 }
 
-int FalconRosDriver::initFalcon() {
+int Chai3dRosDriver::initFalcon() {
     // create device handler
     handler = new chai3d::cHapticDeviceHandler();
 
@@ -56,7 +56,7 @@ int FalconRosDriver::initFalcon() {
     return 1;
 }
 
-void FalconRosDriver::saturatAndSetForces(double x, double y, double z) {
+void Chai3dRosDriver::saturatAndSetForces(double x, double y, double z) {
     if (x < -MAX_FORCE) x = -MAX_FORCE;
     if (y < -MAX_FORCE) y = -MAX_FORCE;
     if (z < -MAX_FORCE) z = -MAX_FORCE;
@@ -66,12 +66,12 @@ void FalconRosDriver::saturatAndSetForces(double x, double y, double z) {
     this->force.set(z, x, y);
 }
 
-void FalconRosDriver::forceCallback(const geometry_msgs::Vector3::ConstPtr &data) {
+void Chai3dRosDriver::forceCallback(const geometry_msgs::Vector3::ConstPtr &data) {
     this->saturatAndSetForces(data->x, data->y, data->z);
     forceConsumed = false;
 }
 
-void FalconRosDriver::publishFalconData() {
+void Chai3dRosDriver::publishFalconData() {
 
     ros::AsyncSpinner spinner(2);
     spinner.start();
@@ -110,8 +110,8 @@ void FalconRosDriver::publishFalconData() {
     hapticLoop = false;
 }
 
-void FalconRosDriver::startFalconRosNode() {
-    boost::thread hapticsThread(boost::bind(&FalconRosDriver::falconCallback, this));
+void Chai3dRosDriver::startChai3dRosNode() {
+    boost::thread hapticsThread(boost::bind(&Chai3dRosDriver::falconCallback, this));
 
     publishFalconData();
 
@@ -120,12 +120,12 @@ void FalconRosDriver::startFalconRosNode() {
     cleanUpFalcon();
 }
 
-void FalconRosDriver::cleanUpFalcon() {
+void Chai3dRosDriver::cleanUpFalcon() {
     hapticDevice->close();
     delete(handler);
 }
 
-void FalconRosDriver::falconCallback() {
+void Chai3dRosDriver::falconCallback() {
 
     // main haptic simulation loop
     while (hapticLoop) {
